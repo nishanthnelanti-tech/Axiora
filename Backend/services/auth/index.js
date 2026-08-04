@@ -13,7 +13,7 @@ app.use(cookieParser())
 app.use("/",router)
 
 app.get("/",(req,res)=>{
-    res.json({message:"hello this is auth"})
+    res.json({message:"hello this is auth"})//me
 })
 
 app.listen(port,()=>{
