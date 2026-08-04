@@ -22,7 +22,7 @@ export const login=async(req,res)=>{
         }
 
         const sessionId=crypto.randomUUID()
-        redis.set(`session:${sessionId}`,JSON.stringify({
+        await redis.set(`session:${sessionId}`,JSON.stringify({
             userID:user._id,
             name:user.name,
             email:user.email,
@@ -31,8 +31,9 @@ export const login=async(req,res)=>{
 
         res.cookie("session",sessionId,{
             httpOnly:true,
-            sameSite:"strict",
+            sameSite:"none",
             secure:false,
+            path:"/",
             maxAge:7*24*60*60*1000
         })
 
@@ -46,8 +47,10 @@ export const login=async(req,res)=>{
 
 export const logOut=async (req,res)=>{
     try{
-        const sessionId=req.cookie?.session
-        await redis.del(`session:${sessionId}`)
+        const sessionId=req.cookies?.session
+        if (sessionId) {
+            await redis.del(`session:${sessionId}`)
+        }
 
         res.clearCookie("session")
         return res.status(200).json({message:"logout Successful"})
