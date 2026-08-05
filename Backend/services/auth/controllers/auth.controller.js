@@ -29,12 +29,12 @@ export const login=async(req,res)=>{
             avatar:user.avatar
         }),"EX",7*24*60*60)
 
-        res.cookie("session",sessionId,{
-            httpOnly:true,
-            sameSite:"none",
-            secure:false,
-            path:"/",
-            maxAge:7*24*60*60*1000
+        res.cookie("session", sessionId, {
+            httpOnly: true,
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            secure: process.env.NODE_ENV === "production",
+            path: "/",
+            maxAge: 7*24*60*60*1000
         })
 
         return res.status(200).json(user)
