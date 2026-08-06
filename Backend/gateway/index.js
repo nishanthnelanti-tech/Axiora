@@ -20,6 +20,7 @@ app.use(cors({
 
 app.use(cookieParser())
 app.use("/api/chat",protect,proxyWithHeader(process.env.Chat_service))
+app.use("/api/agent",protect,proxy(process.env.Agent_service))
 app.use("/api/auth",proxy(process.env.Auth_service, {
     proxyReqPathResolver: req => req.url,
     userResHeaderDecorator: (headers, userReq, userRes, proxyReq, proxyRes) => {
