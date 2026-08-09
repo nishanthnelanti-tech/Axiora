@@ -25,7 +25,7 @@ export const getConversations=async(req,res)=>{
             userId:userId
         }).sort({updatedAt:-1})
 
-        return res.status(200).json(conversation)
+        return res.status(200).json(conversations)
     }
     catch(error){
         return res.status(500).json({message:`get conversation error ${error}`})
@@ -62,11 +62,11 @@ export const saveMessage=async(req,res)=>{
 }
 
 export const getMessages=async(req,res)=>{
-    try{y
-        const message=await Message.find({
-        conversationId:req.params.ConversationId
-    }).sort({createdAt:-1})
-    return res.status(200).json(message)
+    try{
+        const messages=await Message.find({
+            conversationId:req.params.conversationId
+        }).sort({createdAt:-1})
+        return res.status(200).json(messages)
     }
     catch(error){
         return res.status(500).json({message:`get message error ${error}`})
