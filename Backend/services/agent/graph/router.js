@@ -1,6 +1,8 @@
 import { getModel } from "../config/llmModels.js"
 
-export const router=async(state)=>{
+const ROUTER_TIMEOUT_MS = Number(process.env.ROUTER_TIMEOUT_MS || 15000)
+
+export const router = async (state) => {
     const llm = await getModel("router")
     const prompt = `You are an agent router.
 
@@ -11,7 +13,7 @@ Available agents:
 - coding
 - pdf
 - ppt
-- vision 
+- vision
 
 Rules:
 
@@ -44,8 +46,8 @@ Questions about generate ppts
 or ppt context.
 
 vision:
-  Generate image,
-  create image
+Generate image,
+create image
 
 Return ONLY one word:
 
@@ -57,15 +59,16 @@ ppt
 vision
 
 User Query:
- ${state.prompt}
+${state.prompt}
 `
-const response = await llm.invoke(prompt)
 
- return {
-    ...state,
-    agent: response.content
-           .trim()
-           .toLowerCase()
- }
+    const response = await Promise.race([
+        llm.invoke(prompt),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Router timeout")), ROUTER_TIMEOUT_MS))
+    ])
 
+    return {
+        ...state,
+        agent: String(response.content).trim().toLowerCase()
+    }
 }

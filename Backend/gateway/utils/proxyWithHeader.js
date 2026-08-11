@@ -1,12 +1,19 @@
 import proxy from "express-http-proxy"
 
-export const proxyWithHeader=(serviceUrl)=>{
-    return proxy(serviceUrl,{
-        proxyReqBodyDecorator:(proxyReqOpts,srcReq)=>{
-            if(srcReq.user){
-                proxyReqOpts.headers["x-user-id"] = srcReq.user.userID || srcReq.user.userId || srcReq.user._id
+export const proxyWithHeader = (serviceUrl) => {
+    return proxy(serviceUrl, {
+        proxyReqPathResolver: (req) => {
+            const path = req.originalUrl || req.url || "/";
+            return path.replace(/^\/api\/chat/, "") || "/";
+        },
+        proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+            proxyReqOpts.headers = proxyReqOpts.headers || {};
+
+            if (srcReq.user) {
+                proxyReqOpts.headers["x-user-id"] = srcReq.user.userID || srcReq.user.userId || srcReq.user._id;
             }
-            return proxyReqOpts
+
+            return proxyReqOpts;
         }
-    })
-}
+    });
+};
