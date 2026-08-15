@@ -2,10 +2,9 @@ import dotenv from "dotenv"
 import express from "express"
 import cookieParser from "cookie-parser"
 import connectDb from "./config/db.js"
+import router from "./routes/agent.route.js"
 
 dotenv.config()
-
-import { router } from "./graph/router.js"
 
 const port=process.env.PORT
 
