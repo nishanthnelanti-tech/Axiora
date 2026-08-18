@@ -1,5 +1,6 @@
 import axios from "axios"
 import {graph} from "../graph/graph.js"
+import { addMessage } from "../config/memory.js"
 
 const AI_TIMEOUT_MS = Number(process.env.AI_TIMEOUT_MS || 20000)
 
@@ -20,6 +21,9 @@ export const agent = async (req, res) => {
             new Promise((_, reject) => setTimeout(() => reject(new Error("AI request timed out")), AI_TIMEOUT_MS))
         ])
         const response=result.aiResponse
+
+        await addMessage(conversationId,"user",prompt)
+        await addMessage(conversationId,"assistant",response)
 
         await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
             conversationId,

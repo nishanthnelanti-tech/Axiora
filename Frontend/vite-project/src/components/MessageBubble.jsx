@@ -1,3 +1,5 @@
+import Markdown from 'react-markdown'
+
 function MessageBubble({role,content}){
   const isUser = role === "user"
   
@@ -11,7 +13,10 @@ function MessageBubble({role,content}){
           ? "bg-gradient-to-br from-indigo-500 to-violet-700 text-white rounded-tr-sm"
           : " text-slate-200 rounded-tl-sm"
         }`}>
-          {content}
+          <Markdown>
+            {content}
+
+          </Markdown>
       </div>
     </div>
   )
