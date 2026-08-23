@@ -6,7 +6,7 @@ const AI_TIMEOUT_MS = Number(process.env.AI_TIMEOUT_MS || 20000)
 
 export const agent = async (req, res) => {
     try {
-        const { conversationId, prompt } = req.body
+        const { conversationId, prompt, agent} = req.body
 
         await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
             conversationId,
@@ -17,7 +17,7 @@ export const agent = async (req, res) => {
         })
 
         const result = await Promise.race([
-            graph.invoke({ prompt, conversationId }),
+            graph.invoke({ prompt, conversationId, agent }),
             new Promise((_, reject) => setTimeout(() => reject(new Error("AI request timed out")), AI_TIMEOUT_MS))
         ])
         const response=result.aiResponse
@@ -28,13 +28,17 @@ export const agent = async (req, res) => {
         await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
             conversationId,
             role: "assistant",
-            content: response
+            content: response,
+            images:result.images || []
         }, {
             timeout: 15000
         })
 
 
-        return res.status(200).json(result.aiResponse)
+        return res.status(200).json({
+            answer: response,
+            images:result.images || [],
+        })
     } catch (error) {
         console.error("agent error:", error)
         return res.status(504).json({

@@ -1,6 +1,6 @@
 import Markdown from 'react-markdown'
 
-function MessageBubble({role,content}){
+function MessageBubble({role,content,images}){
   const isUser = role === "user"
   
   return (

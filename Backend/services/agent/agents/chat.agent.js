@@ -12,8 +12,15 @@ export const chatAgent = async (state) => {
 
     const history = await getMemory(state.conversationId)
 
+    const searchContext=state.searchResults?`
+    web search results:
+    ${JSON.stringify(state.searchResults)}
+    Answer the user using the above search results`:""
+
     const systemPrompt = `
     You are AxioraAI, an intelligent AI assistant.
+
+    ${searchContext}
 
     If searchContext exists:
 
