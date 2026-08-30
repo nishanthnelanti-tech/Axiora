@@ -50,6 +50,7 @@ export const chatAgent = async (state) => {
     ]
 
     history.forEach(msg => {
+        if (!msg.content) return
         if (msg.role == "user") {
             messages.push(new HumanMessage(msg.content))
         }

@@ -56,9 +56,9 @@ function ChatInput() {
 
     setValue("");
 
-    dispatch(addMessage({ role: "user", content: value.trim() }));
+    dispatch(addMessage({ role: "user", content: value.trim() , images:[]}));
     const data = await sendMessage(payload);
-    dispatch(addMessage({ role: "assistant", content: data.answer, images:data.images }));
+    dispatch(addMessage({ role: "assistant", content: data?.answer, images:data?.images }));
     console.log(data);
   };
 
