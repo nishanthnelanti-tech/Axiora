@@ -13,7 +13,7 @@ import {
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import sendMessage from "../features/sendMessage.js";
-import { addMessage } from "../redux/messageSlice.js";
+import { addMessage, setArtifacts } from "../redux/messageSlice.js";
 import { createConversation } from "../features/createConversation.js";
 import {
   addConversation,
@@ -57,7 +57,9 @@ function ChatInput() {
     setValue("");
 
     dispatch(addMessage({ role: "user", content: value.trim() , images:[]}));
+    setValue("");
     const data = await sendMessage(payload);
+    dispatch(setArtifacts(data?.artifacts || []));
     dispatch(addMessage({ role: "assistant", content: data?.answer, images:data?.images }));
     console.log(data);
   };

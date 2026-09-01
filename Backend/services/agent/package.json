@@ -12,6 +12,8 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.1121.0",
+    "@aws-sdk/s3-request-presigner": "^3.1121.0",
     "@langchain/core": "^1.2.4",
     "@langchain/google": "^0.2.1",
     "@langchain/google-genai": "^2.2.0",
@@ -24,6 +26,8 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "mongoose": "^9.9.1",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "pdfkit": "^0.20.2",
+    "pptxgenjs": "^4.0.1"
   }
 }

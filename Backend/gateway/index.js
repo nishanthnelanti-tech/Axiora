@@ -37,6 +37,7 @@ app.use("/api/agent", protect, proxy(process.env.Agent_service, {
         return proxyReqOpts;
     }
 }))
+app.use("/api/billing", protect, proxyWithHeader(process.env.Billing_service))
 app.use("/api/auth",proxy(process.env.Auth_service, {
     proxyReqPathResolver: req => req.url,
     userResHeaderDecorator: (headers, userReq, userRes, proxyReq, proxyRes) => {
