@@ -6,7 +6,7 @@
   User,
   Coins,
   LogOut,
-  PanelRight
+  PanelRight,
 } from "lucide-react";
 import logOut from "../features/logOut.js";
 import { useEffect, useState } from "react";
@@ -20,6 +20,7 @@ import { createConversation } from "../features/createConversation.js";
 import { addConversation } from "../redux/conversationSlice.js";
 import { useSelector } from "react-redux";
 import { setUserdata } from "../redux/userslice.js";
+import BillingDrawer from './BillingDrawer';
 
 const SideBar = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -29,6 +30,7 @@ const SideBar = () => {
     (state) => state.conversation,
   );
   const { userData } = useSelector((state) => state.user);
+  const [showBilling, setShowBilling] = useState(false);
 
   useEffect(() => {
     const getConv = async () => {
@@ -123,7 +125,7 @@ const SideBar = () => {
 
           <button
             className="flex items-center justify-center w-7 h-7 rounded-lg text-slate-500 hover:text-slate-200 hover:bg-white/[0.05] transition-colors duration-150 bg-transparent border-none cursor-pointer"
-            onClick={() =>  dispatch(setSelectedConversation(null))}
+            onClick={() => dispatch(setSelectedConversation(null))}
           >
             <PenSquare size={14} />
           </button>
@@ -205,7 +207,10 @@ const SideBar = () => {
                 </p>
               </div>
               <div className="flex gap-1">
-                <button className="flex items-center justify-center w-7 h-7 rounded-[7px] border-none bg-transparent text-yellow-600 cursor-pointer hover:bg-white/[0.08] hover:text-slate-400 transition-all duration-150">
+                <button
+                  onClick={() => setShowBilling(true)}
+                  className="flex items-center justify-center w-7 h-7 rounded-[7px] border-none bg-transparent text-yellow-600 cursor-pointer hover:bg-white/[0.08] hover:text-slate-400 transition-all duration-150"
+                >
                   <Coins size={16} />
                 </button>
                 <button
@@ -226,6 +231,8 @@ const SideBar = () => {
           )}
         </div>
       </div>
+
+      <BillingDrawer open={showBilling} onClose={() => setShowBilling(false)} />
     </div>
   );
 };
