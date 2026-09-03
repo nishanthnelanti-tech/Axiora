@@ -9,6 +9,8 @@ const CODING_TIMEOUT_MS = Number(process.env.CODING_TIMEOUT_MS || 60000)
 export const agent = async (req, res) => {
     try {
         const { conversationId, prompt, agent } = req.body
+        const file=req.file
+        console.log("file",file)
         const userId = req.headers["x-user-id"]
 
         await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
@@ -22,7 +24,7 @@ export const agent = async (req, res) => {
         const timeoutMs = agent === "coding" ? CODING_TIMEOUT_MS : AI_TIMEOUT_MS
 
         const result = await Promise.race([
-            graph.invoke({ prompt, conversationId, agent, userId }),
+            graph.invoke({ prompt, conversationId, agent, userId, file}),
             new Promise((_, reject) => setTimeout(() => reject(new Error("AI request timed out")), timeoutMs))
         ])
         const response=result.aiResponse

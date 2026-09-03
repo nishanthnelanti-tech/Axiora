@@ -1,4 +1,5 @@
 import { getModel } from "../config/llmModels.js";
+import { agent } from "../controllers/agent.controller.js"
 
 const ROUTER_TIMEOUT_MS = Number(process.env.ROUTER_TIMEOUT_MS || 15000);
 
@@ -8,6 +9,22 @@ export const router = async (state) => {
       ...state,
       agent: state.agent,
     };
+  }
+
+  if(state.file){
+if(state.file.mimetype==="application/pdf"){
+    return {
+      ...state,
+      agent:"pdfRag"
+    }
+  }
+
+    if(state.file.mimetype.startsWith("image/")){
+    return {
+      ...state,
+      agent:"imageAnalyzer"
+    }
+  }
   }
 
   const llm = await getModel("router");

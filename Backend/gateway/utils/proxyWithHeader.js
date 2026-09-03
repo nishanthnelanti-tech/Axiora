@@ -2,6 +2,7 @@ import proxy from "express-http-proxy"
 
 export const proxyWithHeader = (serviceUrl, servicePrefix) => {
     return proxy(serviceUrl, {
+        limit: "25mb",
         proxyReqPathResolver: (req) => {
             const path = req.originalUrl || req.url || "/";
             return path.replace(new RegExp(`^${servicePrefix || ""}`), "") || "/";
