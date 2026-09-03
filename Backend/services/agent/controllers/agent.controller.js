@@ -1,12 +1,15 @@
 import axios from "axios"
 import {graph} from "../graph/graph.js"
+import { addMessage } from "../config/memory.js"
+import redis from "../../../shared/redis/redis.js"
 
 const AI_TIMEOUT_MS = Number(process.env.AI_TIMEOUT_MS || 20000)
 const CODING_TIMEOUT_MS = Number(process.env.CODING_TIMEOUT_MS || 60000)
 
 export const agent = async (req, res) => {
     try {
-        const { conversationId, prompt, agent} = req.body
+        const { conversationId, prompt, agent } = req.body
+        const userId = req.headers["x-user-id"]
 
         await axios.post(`${process.env.CHAT_SERVICE}/save-message`, {
             conversationId,
@@ -19,7 +22,7 @@ export const agent = async (req, res) => {
         const timeoutMs = agent === "coding" ? CODING_TIMEOUT_MS : AI_TIMEOUT_MS
 
         const result = await Promise.race([
-            graph.invoke({ prompt, conversationId, agent }),
+            graph.invoke({ prompt, conversationId, agent, userId }),
             new Promise((_, reject) => setTimeout(() => reject(new Error("AI request timed out")), timeoutMs))
         ])
         const response=result.aiResponse

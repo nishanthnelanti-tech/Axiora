@@ -1,10 +1,10 @@
 import proxy from "express-http-proxy"
 
-export const proxyWithHeader = (serviceUrl) => {
+export const proxyWithHeader = (serviceUrl, servicePrefix) => {
     return proxy(serviceUrl, {
         proxyReqPathResolver: (req) => {
             const path = req.originalUrl || req.url || "/";
-            return path.replace(/^\/api\/chat/, "") || "/";
+            return path.replace(new RegExp(`^${servicePrefix || ""}`), "") || "/";
         },
         proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
             proxyReqOpts.headers = proxyReqOpts.headers || {};

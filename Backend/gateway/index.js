@@ -21,23 +21,9 @@ app.use(cors({
 }))
 
 app.use(cookieParser())
-app.use("/api/chat", protect, proxyWithHeader(process.env.Chat_service))
-app.use("/api/agent", protect, proxy(process.env.Agent_service, {
-    proxyReqPathResolver: (req) => {
-        const path = req.originalUrl || req.url || "/";
-        return path.replace(/^\/api\/agent/, "") || "/";
-    },
-    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
-        proxyReqOpts.headers = proxyReqOpts.headers || {};
-
-        if (srcReq.user) {
-            proxyReqOpts.headers["x-user-id"] = srcReq.user.userID || srcReq.user.userId || srcReq.user._id;
-        }
-
-        return proxyReqOpts;
-    }
-}))
-app.use("/api/billing", protect, proxyWithHeader(process.env.Billing_service))
+app.use("/api/chat", protect, proxyWithHeader(process.env.Chat_service, "/api/chat"))
+app.use("/api/agent", protect, proxyWithHeader(process.env.Agent_service, "/api/agent"))
+app.use("/api/billing", protect, proxyWithHeader(process.env.Billing_service, "/api/billing"))
 app.use("/api/auth",proxy(process.env.Auth_service, {
     proxyReqPathResolver: req => req.url,
     userResHeaderDecorator: (headers, userReq, userRes, proxyReq, proxyRes) => {

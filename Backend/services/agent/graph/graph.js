@@ -17,6 +17,8 @@ workflow.addNode("vision",visionAgent)
 workflow.addNode("pdf",pdfAgent)
 workflow.addNode("ppt",pptAgent)
 workflow.addNode("search",searchAgent)
+workflow.addNode("search",searchAgent)
+workflow.addNode("search",searchAgent)
 
 workflow.addEdge("__start__","router")
 workflow.addConditionalEdges("router",(state)=>{

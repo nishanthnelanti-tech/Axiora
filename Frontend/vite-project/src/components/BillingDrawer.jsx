@@ -3,9 +3,13 @@ import { Crown, X } from 'lucide-react'
 import { useSelector } from 'react-redux'
 import { createOrder } from '../features/createOrder.js'
 import { verifyPayment } from '../features/verifyPayment.js'
+import getCurrentUser from '../features/getCurrentUser.js'
+import { setUserdata } from '../redux/userslice.js'
+import { useDispatch } from 'react-redux'
 function BillingDrawer({ open, onClose }) {
 
     const { userData } = useSelector(state => state.user)
+    const dispatch = useDispatch()
 
     const handleUpgrade = async (plan) => {
         try {
@@ -14,13 +18,15 @@ function BillingDrawer({ open, onClose }) {
                 key: import.meta.env.VITE_RAZORPAY_KEY_ID,
                 amount: data?.order?.amount,
                 currency: data?.order?.currency,
-                name: "CortexAI",
+                name: "AxioraAI",
                 description: `${data?.plan?.name} Plan`,
                 order_id: data?.order?.id,
                 handler: async (response) => {
                     try {
                         const data = await verifyPayment(response)
                         console.log(data)
+                        const updatedUser = await getCurrentUser()
+                        dispatch(setUserdata(updatedUser))
                     } catch (error) {
                         console.log(error)
                     }

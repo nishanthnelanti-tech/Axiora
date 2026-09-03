@@ -14,7 +14,7 @@ export const createOrder = async (req, res) => {
         }
 
         const order = await razorpay.orders.create({
-            amount: selectedPlan.amount * 100,
+            amount: Math.round(Number(selectedPlan.amount) * 100),
             currency: "INR",
             receipt: `receipt-${Date.now()}`
         })
@@ -56,6 +56,10 @@ export const verifyPayment = async (req,res) => {
 
  if(!payment){
     return res.status(404).json({message:"Payment Not Found"})
+ }
+
+ if (payment.status === "paid") {
+     return res.status(200).json({ message: "Payment already verified" })
  }
 
  payment.status="paid"

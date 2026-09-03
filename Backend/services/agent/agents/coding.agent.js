@@ -1,4 +1,5 @@
 import { getModel } from "../config/llmModels.js";
+import {deductCredits} from "../utils/deductCredits.js"
 
 export const codingAgent = async (state) => {
   try {
@@ -96,6 +97,7 @@ ${state.prompt}
             console.log(res.content);
 
             const data = JSON.parse(res.content);
+            await deductCredits(state.userId,"coding")
 
             return {
                 ...state,
@@ -149,6 +151,8 @@ User Request:
 
 ${state.prompt}
 `);
+
+    await deductCredits(state.userId,"coding")
 
     return {
         ...state,

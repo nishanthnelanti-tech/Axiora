@@ -21,6 +21,8 @@ import {
 } from "../redux/conversationSlice.js";
 import { updateConversation } from "../features/updateConversation.js";
 import { setConvTitle } from "../redux/conversationSlice.js";
+import getCurrentUser from "../features/getCurrentUser.js";
+import { setUserdata } from "../redux/userslice.js";
 
 function ChatInput() {
   const [value, setValue] = useState("");
@@ -59,6 +61,10 @@ function ChatInput() {
     dispatch(addMessage({ role: "user", content: value.trim() , images:[]}));
     setValue("");
     const data = await sendMessage(payload);
+    if (data) {
+      const updatedUser = await getCurrentUser();
+      dispatch(setUserdata(updatedUser));
+    }
     dispatch(setArtifacts(data?.artifacts || []));
     dispatch(addMessage({ role: "assistant", content: data?.answer, images:data?.images }));
     console.log(data);

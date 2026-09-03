@@ -1,5 +1,6 @@
 // search.agent.js
 import { searchTool } from "../config/tavily.js"
+import {deductCredits} from "../utils/deductCredits.js"
 
 const MAX_RESULTS_FOR_CONTEXT = 4
 const MAX_CONTENT_CHARS = 600 // per-result cap
@@ -7,6 +8,7 @@ const MAX_CONTENT_CHARS = 600 // per-result cap
 export const searchAgent = async (state) => {
     try {
         const results = await searchTool.invoke({ query: state.prompt })
+        await deductCredits(state.userId,"search")
 
         // Keep the full images array for the frontend
         const images = results.images || []
