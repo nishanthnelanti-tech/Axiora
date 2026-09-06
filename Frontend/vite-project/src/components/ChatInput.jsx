@@ -9,12 +9,17 @@ import {
   ImageIcon,
   Globe,
   Presentation,
-  X
+  X,
+  MicOff
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import sendMessage from "../features/sendMessage.js";
-import { addMessage, setArtifacts, setIsLoading } from "../redux/messageSlice.js";
+import {
+  addMessage,
+  setArtifacts,
+  setIsLoading,
+} from "../redux/messageSlice.js";
 import { createConversation } from "../features/createConversation.js";
 import {
   addConversation,
@@ -32,11 +37,56 @@ function ChatInput() {
   const fileRef = useRef(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const { selectedConversation } = useSelector((state) => state.conversation);
+  const [listening, setListening] = useState(false);
   const { messages } = useSelector((state) => state.message);
   const dispatch = useDispatch();
+  const recognitionRef = useRef(null);
+
+  useEffect(() => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = true;
+    recognition.continuous = true;
+
+    recognition.onresult = (event) => {
+      let transcript = "";
+
+      for (
+        let index = event.resultIndex;
+        index < event.results.length;
+        index++
+      ) {
+        transcript += event.results[index][0].transcript;
+      }
+      setValue(transcript);
+    };
+
+    recognition.onend = () => {
+      setListening(false);
+    };
+
+    recognitionRef.current = recognition;
+  }, []);
+
+  const toggleMic = () => {
+    if (!recognitionRef.current) {
+      alert("speech recognition not supported");
+    }
+    if (listening) {
+      recognitionRef.current.stop();
+      setListening(false);
+    } else {
+      recognitionRef.current.start();
+      setListening(true);
+    }
+  };
 
   const handleSendMessage = async () => {
-    dispatch(setIsLoading(true))
+    dispatch(setIsLoading(true));
     let conversation = selectedConversation;
     if (!conversation) {
       const conv = await createConversation();
@@ -75,8 +125,8 @@ function ChatInput() {
     dispatch(addMessage({ role: "user", content: value.trim(), images: [] }));
     setValue("");
     const data = await sendMessage(formData);
-    dispatch(setIsLoading(false))
-    setSelectedFile(null)
+    dispatch(setIsLoading(false));
+    setSelectedFile(null);
     if (data) {
       const updatedUser = await getCurrentUser();
       dispatch(setUserdata(updatedUser));
@@ -238,8 +288,11 @@ function ChatInput() {
             >
               <Paperclip size={16} />
             </button>
-            <button className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:text-slate-400 hover:bg-white/[0.05] border border-transparent hover:border-white/[0.06] transition-all duration-150 bg-transparent cursor-pointer">
-              <Mic size={16} />
+            <button
+              onClick={toggleMic}
+              className={`flex items-center justify-center w-8 h-8 rounded-lg  transition-all duration-150 cursor-pointer ${listening ? "bg-red-500 text-white" : "text-slate-600 hover:bg-white/[0.05]"}`}
+            >
+              {listening ? <Mic size={16} /> : <MicOff size={16} />}
             </button>
           </div>
           <button
